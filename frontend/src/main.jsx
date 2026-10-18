@@ -16,6 +16,7 @@ const analysisStages = [
 ]
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024
+const SUPPORT_EMAIL = 'sdm260493@gmail.com'
 
 function App() {
   const [file, setFile] = useState(null)
@@ -23,6 +24,7 @@ function App() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [stage, setStage] = useState(0)
+  const [emailCopied, setEmailCopied] = useState(false)
 
   useEffect(() => {
     if (!loading) {
@@ -112,6 +114,16 @@ function App() {
     }
   }
 
+  async function copySupportEmail() {
+    try {
+      await navigator.clipboard.writeText(SUPPORT_EMAIL)
+      setEmailCopied(true)
+      window.setTimeout(() => setEmailCopied(false), 2000)
+    } catch {
+      setError(`Не удалось скопировать почту. Скопируйте вручную: ${SUPPORT_EMAIL}`)
+    }
+  }
+
   return (
       <main>
 
@@ -182,11 +194,13 @@ function App() {
                   {error}
                 </p>
             )}
-            <button disabled={loading}>
-              {loading
-                  ? 'Заключение готовится…'
-                  : 'Проверить документ'}
-            </button>
+            {file && (
+                <button disabled={loading}>
+                  {loading
+                      ? 'Заключение готовится…'
+                      : 'Проверить документ'}
+                </button>
+            )}
           </form>
 
 
@@ -288,6 +302,28 @@ function App() {
               </article>
           )}
         </section>
+          <footer className="contact-footer">
+              <div className="contact-badge">
+                  ЕСТЬ ВОПРОСЫ?
+              </div>
+
+              <div className="contact-content">
+                  <h2>ПОГОВОРИМ.</h2>
+
+                  <p>
+                      Вопросы, предложения или нашли ошибку?
+                      Напишите нам — мы читаем каждое обращение.
+                  </p>
+
+                  <button
+                      type="button"
+                      className="contact-email"
+                      onClick={copySupportEmail}
+                  >
+                      {emailCopied ? '✓ Почта скопирована' : `✉ ${SUPPORT_EMAIL}`}
+                  </button>
+              </div>
+          </footer>
       </main>
   )
 }
