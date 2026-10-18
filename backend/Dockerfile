@@ -12,7 +12,8 @@ WORKDIR /app
 
 # GigaChat OAuth requires the Russian Trusted Root CA in the container's JDK truststore.
 COPY backend/certs/russian_trusted_root_ca_pem.crt /tmp/russian_trusted_root_ca_pem.crt
-RUN keytool -importcert -storepass changeit -noprompt -alias rus_root_ca -cacerts -trustcacerts \
+RUN apt-get update && apt-get install -y --no-install-recommends fonts-dejavu-core && rm -rf /var/lib/apt/lists/* && \
+    keytool -importcert -storepass changeit -noprompt -alias rus_root_ca -cacerts -trustcacerts \
     -file /tmp/russian_trusted_root_ca_pem.crt && rm /tmp/russian_trusted_root_ca_pem.crt
 
 COPY --from=build /workspace/backend/target/*.jar app.jar

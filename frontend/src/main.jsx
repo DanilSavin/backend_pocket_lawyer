@@ -25,6 +25,8 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [stage, setStage] = useState(0)
   const [emailCopied, setEmailCopied] = useState(false)
+  const [openedFindingAction, setOpenedFindingAction] = useState(null)
+  const [downloadingReport, setDownloadingReport] = useState(false)
 
   useEffect(() => {
     if (!loading) {
@@ -72,6 +74,7 @@ function App() {
     setLoading(true)
     setError('')
     setResult(null)
+    setOpenedFindingAction(null)
 
     const data = new FormData()
     data.append('file', file)
@@ -122,6 +125,44 @@ function App() {
     } catch {
       setError(`Не удалось скопировать почту. Скопируйте вручную: ${SUPPORT_EMAIL}`)
     }
+  }
+
+  async function downloadReport() {
+    if (!result) return
+
+    setDownloadingReport(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/documents/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result),
+      })
+
+      if (!response.ok) {
+        throw new Error('Не удалось сформировать PDF-отчёт.')
+      }
+
+      const fileBlob = await response.blob()
+      const url = URL.createObjectURL(fileBlob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'zaklyuchenie-karmannogo-yurista.pdf'
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось сформировать PDF-отчёт.')
+    } finally {
+      setDownloadingReport(false)
+    }
+  }
+
+  function toggleFindingAction(index, action) {
+    const next = `${index}-${action}`
+    setOpenedFindingAction(current => current === next ? null : next)
   }
 
   return (
@@ -265,6 +306,15 @@ function App() {
                 <h2> Заключение </h2>
                 <p> {result.summary} </p>
 
+                <button
+                    className="report-download"
+                    type="button"
+                    disabled={downloadingReport}
+                    onClick={downloadReport}
+                >
+                  {downloadingReport ? 'Собираем PDF…' : 'Скачать заключение в PDF'}
+                </button>
+
                 {result.strengths?.length > 0 && (
                     <div className="strengths">
                       <h2> Сильные стороны </h2>
@@ -288,10 +338,49 @@ function App() {
                       <span className={`dot ${finding.severity}`} aria-hidden="true"/>
                                 <div>
                                   <h3> {finding.title} </h3>
+                                  {finding.clause && (
+                                      <p className="finding-clause">
+                                        Пункт договора: {finding.clause}
+                                      </p>
+                                  )}
+                                  {finding.quote && (
+                                      <blockquote>
+                                        «{finding.quote}»
+                                      </blockquote>
+                                  )}
                                   <p> {finding.description} </p>
                                   <b> Что сделать:
                                   </b>{' '}
                                   {finding.recommendation}
+                                  <div className="finding-actions">
+                                    <button
+                                        type="button"
+                                        className="finding-action"
+                                        onClick={() => toggleFindingAction(index, 'explanation')}
+                                    >
+                                      Объяснить простыми словами
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="finding-action"
+                                        onClick={() => toggleFindingAction(index, 'revision')}
+                                    >
+                                      Предложить правку
+                                    </button>
+                                  </div>
+                                  {openedFindingAction === `${index}-explanation` && (
+                                      <div className="finding-detail">
+                                        <strong>Простое объяснение</strong>
+                                        <p>{finding.explanation || finding.description}</p>
+                                      </div>
+                                  )}
+                                  {openedFindingAction === `${index}-revision` && (
+                                      <div className="finding-detail">
+                                        <strong>Вариант более безопасной редакции</strong>
+                                        <p>{finding.suggestedRevision || finding.recommendation}</p>
+                                        <small>Это пример для обсуждения со второй стороной, а не готовая юридическая консультация.</small>
+                                      </div>
+                                  )}
                                 </div>
                               </div>
                           )

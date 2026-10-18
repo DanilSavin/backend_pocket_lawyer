@@ -11,5 +11,14 @@ public record AnalysisResponse(
         List<Finding> findings,
         String disclaimer
 ) {
-    public record Finding(String title, String severity, String description, String recommendation) {}
+    public record Finding(
+            String title,
+            String severity,
+            String description,
+            String recommendation,
+            String clause,
+            String quote,
+            String explanation,
+            String suggestedRevision
+    ) {}
 }

@@ -39,7 +39,11 @@ public class LegalAnalysisService {
                     item.path("title").asText("Условие требует проверки"),
                     severity(item.path("severity").asText()),
                     item.path("description").asText(),
-                    item.path("recommendation").asText())));
+                    item.path("recommendation").asText(),
+                    item.path("clause").asText(),
+                    item.path("quote").asText(),
+                    item.path("explanation").asText(),
+                    item.path("suggestedRevision").asText())));
             String overallRiskLevel = overallRiskLevel(answer.path("riskLevel").asText());
             log.info("Структурированный ответ GigaChat обработан: strengths={}, weaknesses={}, riskLevel={}",
                     strengths.size(), findings.size(), overallRiskLevel);

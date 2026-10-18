@@ -2,6 +2,7 @@ package ru.pocketlawyer.api;
 
 import ru.pocketlawyer.service.LegalAnalysisService;
 import ru.pocketlawyer.service.GigaChatException;
+import ru.pocketlawyer.service.ReportPdfService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -10,15 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
     private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
     private final LegalAnalysisService analysisService;
+    private final ReportPdfService reportPdfService;
 
-    public DocumentController(LegalAnalysisService analysisService) {
+    public DocumentController(LegalAnalysisService analysisService, ReportPdfService reportPdfService) {
         this.analysisService = analysisService;
+        this.reportPdfService = reportPdfService;
     }
 
     @PostMapping(value = "/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -27,6 +31,15 @@ public class DocumentController {
         log.info("Получен документ для анализа: name={}, sizeBytes={}, contentType={}",
                 file.getOriginalFilename(), file.getSize(), file.getContentType());
         return analysisService.analyze(file);
+    }
+
+    @PostMapping(value = "/report", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
+    public org.springframework.http.ResponseEntity<byte[]> report(@RequestBody AnalysisResponse analysis) {
+        byte[] pdf = reportPdfService.create(analysis);
+        return org.springframework.http.ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=legal-analysis.pdf")
+                .header("Content-Type", MediaType.APPLICATION_PDF_VALUE)
+                .body(pdf);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
