@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import ru.pocketlawyer.service.DocumentValidationException;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -54,5 +54,8 @@ public class DocumentController {
     }
 
     public record ErrorResponse(String message) {}
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DocumentValidationException.class)
+    public ErrorResponse handle(DocumentValidationException e) { return new ErrorResponse(e.getMessage()); }
     public static class ApiException extends RuntimeException { public ApiException(String message) { super(message); } }
 }

@@ -1,0 +1,12 @@
+# Add this override to enable Telegram in the same backend instance.
+services:
+  backend:
+    environment:
+      TELEGRAM_ENABLED: "true"
+    secrets:
+      - source: telegram_bot_token
+        target: telegram.bot-token
+
+secrets:
+  telegram_bot_token:
+    file: ./secrets/telegram_bot_token.txt

@@ -15,6 +15,10 @@ gigachat:
   scope: ${GIGACHAT_SCOPE:GIGACHAT_API_PERS}
   model: ${GIGACHAT_MODEL:GigaChat-3-Ultra}
 
+telegram:
+  enabled: ${TELEGRAM_ENABLED:false}
+  bot-token: ${TELEGRAM_BOT_TOKEN:}
+
 logging:
   file:
     name: logs/pocket-lawyer.log
