@@ -33,9 +33,9 @@ class TelegramMessageHandlerTest {
     @Test void rejectsOversizedDocumentsBeforeDownload() throws Exception {
         handler.handle(json.readTree("""
             {"message":{"chat":{"id":123,"type":"private"},"document":{
-              "file_name":"contract.pdf","file_size":10485761,"file_id":"document-id"}}}
+              "file_name":"contract.pdf","file_size":20971521,"file_id":"document-id"}}}
             """));
-        verify(client).message(eq(123L), contains("10 МБ"));
+        verify(client).message(eq(123L), contains("20 МБ"));
         verify(client, never()).download(anyString());
         verifyNoInteractions(analysis, pdf);
     }

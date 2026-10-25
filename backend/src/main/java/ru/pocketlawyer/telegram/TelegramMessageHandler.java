@@ -30,12 +30,16 @@ public class TelegramMessageHandler {
         long chatId = message.path("chat").path("id").asLong();
         JsonNode document = message.path("document");
         if (document.isMissingNode()) {
-            telegram.message(chatId, "Пришлите договор файлом PDF, DOCX или TXT до 10 МБ. "
+            telegram.message(chatId, "Пришлите договор файлом PDF, DOCX или TXT до 20 МБ. "
                     + "Я верну краткое заключение и PDF с рисками и рекомендациями. "
                     + "Документ будет передан в GigaChat для анализа. Результат ИИ может содержать ошибки.");
             return;
         }
         try {
+            if (document.path("file_size").asLong() > TelegramClient.MAX_DOWNLOAD_BYTES) {
+                telegram.message(chatId, "Через Telegram доступны файлы до 20 МБ. Документ до 40 МБ можно загрузить через сайт.");
+                return;
+            }
             String name = document.path("file_name").asText();
             validator.validate(name, document.path("file_size").asLong());
             telegram.message(chatId, "Документ принят. Проверяем условия договора. Это может занять несколько минут.");

@@ -26,5 +26,7 @@ class AnalysisResponseParserTest {
         assertThrows(DocumentValidationException.class, () -> validator.validate("contract.exe", 100));
         assertThrows(DocumentValidationException.class, () -> validator.validate("contract.pdf", 0));
         assertDoesNotThrow(() -> validator.validate("contract.PDF", DocumentValidator.MAX_BYTES));
+        assertEquals(40 * 1024 * 1024, DocumentValidator.MAX_BYTES);
+        assertThrows(DocumentValidationException.class, () -> validator.validate("contract.pdf", DocumentValidator.MAX_BYTES + 1L));
     }
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import ru.pocketlawyer.service.DocumentValidator;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.*;
@@ -16,6 +15,7 @@ import java.util.*;
 @Component
 @ConditionalOnProperty(name = "telegram.enabled", havingValue = "true")
 public class TelegramClient {
+    public static final int MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024;
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(15)).build();
     private final ObjectMapper json;
     private final String token;
@@ -47,8 +47,8 @@ public class TelegramClient {
         JsonNode file = call("getFile", Map.of("file_id", fileId));
         String path = file.path("file_path").asText();
         if (!path.matches("[A-Za-z0-9_./-]+") || path.contains("..") || path.startsWith("/")
-                || file.path("file_size").asLong() > DocumentValidator.MAX_BYTES) {
-            throw new TelegramApiException("Telegram не вернул подходящий файл размером до 10 МБ.");
+                || file.path("file_size").asLong() > MAX_DOWNLOAD_BYTES) {
+            throw new TelegramApiException("Telegram не вернул подходящий файл размером до 20 МБ.");
         }
         var request = HttpRequest.newBuilder(URI.create("https://api.telegram.org/file/bot" + token + "/" + path))
                 .timeout(Duration.ofSeconds(60)).GET().build();
@@ -56,8 +56,8 @@ public class TelegramClient {
             var response = http.send(request, HttpResponse.BodyHandlers.ofInputStream());
             try (var input = response.body()) {
                 if (response.statusCode() != 200) throw new TelegramApiException("Не удалось скачать файл из Telegram.");
-                byte[] data = input.readNBytes(DocumentValidator.MAX_BYTES + 1);
-                if (data.length > DocumentValidator.MAX_BYTES) throw new TelegramApiException("Файл больше 10 МБ.");
+                byte[] data = input.readNBytes(MAX_DOWNLOAD_BYTES + 1);
+                if (data.length > MAX_DOWNLOAD_BYTES) throw new TelegramApiException("Файл больше 20 МБ.");
                 return data;
             }
         } catch (InterruptedException e) {
