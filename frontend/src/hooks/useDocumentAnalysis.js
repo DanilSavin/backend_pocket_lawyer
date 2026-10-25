@@ -13,8 +13,8 @@ export default function useDocumentAnalysis() {
     if (!selected) return
     if (!/\.(pdf|docx|txt)$/i.test(selected.name)) {
       setError('Выберите PDF, DOCX или TXT.')
-    } else if (!selected.size || selected.size > 10 * 1024 * 1024) {
-      setError('Выберите непустой файл размером до 10 МБ.')
+    } else if (!selected.size || selected.size > 40 * 1024 * 1024) {
+      setError('Выберите непустой файл размером до 40 МБ.')
     } else {
       setFile(selected)
     }

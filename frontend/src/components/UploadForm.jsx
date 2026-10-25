@@ -25,7 +25,7 @@ export default function UploadForm({
         <small>
           {file
             ? `${Math.ceil(file.size / 1024)} КБ`
-            : 'PDF, DOCX или TXT · до 10 МБ'}
+            : 'PDF, DOCX или TXT · до 40 МБ'}
         </small>
       </label>
 
