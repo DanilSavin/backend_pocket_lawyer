@@ -46,7 +46,7 @@ export default function App() {
         <section ref={upload} className="upload-section">
           <UploadForm {...analysis} />
         </section>
-        {analysis.loading && <AnalysisProgress />}
+        {analysis.loading && <AnalysisProgress onComplete={analysis.finishProgress} />}
         {analysis.result && (
           <AnalysisResult result={analysis.result} file={analysis.file} />
         )}

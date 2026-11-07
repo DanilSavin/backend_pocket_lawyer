@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { analyzeDocument } from '../api/documents'
 export default function useDocumentAnalysis() {
   const [file, setFile] = useState(null)
-  const [result, setResult] = useState(null)
+  const [pendingResult, setResult] = useState(null)
+  const [progressComplete, setProgressComplete] = useState(false)
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [requestLoading, setLoading] = useState(false)
+  const loading = requestLoading || Boolean(pendingResult && !progressComplete)
+  const result = progressComplete ? pendingResult : null
+  const finishProgress = useCallback(() => setProgressComplete(true), [])
   function handleFileChange(event) {
     const selected = event.target.files?.[0] || null
     setResult(null)
@@ -23,6 +27,7 @@ export default function useDocumentAnalysis() {
     event.preventDefault()
     if (loading || !file) return
     setLoading(true)
+    setProgressComplete(false)
     setError('')
     setResult(null)
     try {
@@ -40,5 +45,6 @@ export default function useDocumentAnalysis() {
     loading,
     handleFileChange,
     submit,
+    finishProgress,
   }
 }
