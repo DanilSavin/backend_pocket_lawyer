@@ -507,6 +507,11 @@ blockquote {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+.result-tabs button:hover:not(:disabled) {
+  background: #252a35;
+  color: #eceef5;
+  transform: none;
+}
 .finding {
   border: 1px solid #45413a;
   border-radius: 10px;
