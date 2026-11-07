@@ -5,15 +5,21 @@ const analysisStages = [
   'Проверяем ответственность, платежи и расторжение',
   'Готовим заключение по сильным сторонам и рискам',
 ]
-export default function AnalysisProgress() {
+export default function AnalysisProgress({ onComplete }) {
   const [stage, setStage] = useState(0)
   useEffect(() => {
-    const timer = window.setInterval(
-      () => setStage((n) => Math.min(n + 1, analysisStages.length - 1)),
-      2400,
-    )
+    let current = 0
+    const timer = window.setInterval(() => {
+      current += 1
+      if (current >= analysisStages.length) {
+        window.clearInterval(timer)
+        onComplete()
+      } else {
+        setStage(current)
+      }
+    }, 2400)
     return () => window.clearInterval(timer)
-  }, [])
+  }, [onComplete])
   return (
     <section className="analysis-progress" aria-live="polite">
       <div className="progress-mark" aria-hidden="true">
