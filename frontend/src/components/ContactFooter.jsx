@@ -17,11 +17,11 @@ export default function ContactFooter() {
     }
   }
   return (
-    <footer className="contact-footer">
-      <div className="contact-badge">ЕСТЬ ВОПРОСЫ?</div>
+    <footer className="contact-footer" id="contact">
+      <div className="contact-badge">ОБРАТНАЯ СВЯЗЬ</div>
 
       <div className="contact-content">
-        <h2>ПОГОВОРИМ.</h2>
+        <h2>Помогите сделать сервис лучше</h2>
 
         <p>
           Вопросы, предложения или нашли ошибку? Напишите нам — мы читаем каждое

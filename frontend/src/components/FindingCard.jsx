@@ -3,14 +3,21 @@ export default function FindingCard({
   index,
   openedFindingAction,
   toggleFindingAction,
+  showClause,
+  selected,
 }) {
   return (
-    <div className="finding" key={index}>
+    <div
+      className={`finding ${finding.severity || 'MEDIUM'} ${selected ? 'selected' : ''}`}
+      key={index}
+    >
       <span className={`dot ${finding.severity}`} aria-hidden="true" />
       <div>
         <h3> {finding.title} </h3>
         {finding.clause && (
-          <p className="finding-clause">Пункт договора: {finding.clause}</p>
+          <button className="finding-clause" onClick={() => showClause(index)}>
+            Пункт {finding.clause} ↗
+          </button>
         )}
         {finding.quote && <blockquote>«{finding.quote}»</blockquote>}
         <p> {finding.description} </p>
@@ -19,13 +26,15 @@ export default function FindingCard({
           <button
             type="button"
             className="finding-action"
+            aria-expanded={openedFindingAction === `${index}-explanation`}
             onClick={() => toggleFindingAction(index, 'explanation')}
           >
-            Объяснить простыми словами
+            Объяснить
           </button>
           <button
             type="button"
             className="finding-action"
+            aria-expanded={openedFindingAction === `${index}-revision`}
             onClick={() => toggleFindingAction(index, 'revision')}
           >
             Предложить правку

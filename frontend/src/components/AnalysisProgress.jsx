@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 const analysisStages = [
-  'Приняли документ в юридическое производство',
+  'Изучаем содержание документа',
   'Выделяем стороны, сроки и ключевые обязательства',
   'Проверяем ответственность, платежи и расторжение',
   'Готовим заключение по сильным сторонам и рискам',
@@ -17,7 +17,7 @@ export default function AnalysisProgress() {
   return (
     <section className="analysis-progress" aria-live="polite">
       <div className="progress-mark" aria-hidden="true">
-        ⚖
+        <span className="scan-sheet" />
       </div>
 
       <div>
@@ -26,8 +26,8 @@ export default function AnalysisProgress() {
         <h2>{analysisStages[stage]}</h2>
 
         <p className="progress-note">
-          Это может занять до пары минут: изучаем условия договора, а не просто
-          ищем слова.
+          Анализ может занять несколько минут. Пока ИИ готовит ответ, здесь
+          показаны направления проверки.
         </p>
 
         <ol>
