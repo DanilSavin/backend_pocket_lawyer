@@ -455,6 +455,11 @@ blockquote {
   color: var(--accent);
   font-size: 12px;
 }
+.text-button:hover:not(:disabled) {
+  background: transparent;
+  color: #eceef5;
+  transform: none;
+}
 .risk {
   padding: 16px;
   background: #2c281f;
@@ -559,6 +564,11 @@ blockquote {
   margin-bottom: 4px;
   border-color: #5d5038;
 }
+.finding-clause:hover:not(:disabled) {
+  background: #443a28;
+  color: #f0d59e;
+  border-color: #8b7448;
+}
 .finding-actions {
   display: flex;
   gap: 9px;
@@ -576,6 +586,16 @@ blockquote {
   background: #a29bff;
   color: #161427;
   border-color: #a29bff;
+}
+.finding-action:hover:not(:disabled) {
+  background: #252a35;
+  color: #eceef5;
+  border-color: #7b8192;
+}
+.finding-action:last-child:hover:not(:disabled) {
+  background: #bbb6ff;
+  color: #161427;
+  border-color: #bbb6ff;
 }
 .finding-detail {
   margin-top: 18px;
@@ -796,6 +816,15 @@ blockquote {
   }
   .mobile-view-switch button[aria-pressed='true'] {
     background: var(--accent);
+    color: #151323;
+  }
+  .mobile-view-switch button:hover:not(:disabled) {
+    background: #303541;
+    color: #eceef5;
+    transform: none;
+  }
+  .mobile-view-switch button[aria-pressed='true']:hover:not(:disabled) {
+    background: #bbb6ff;
     color: #151323;
   }
   .review-workspace {
